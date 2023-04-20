@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 
 from distillers import *
-from data_loader import get_cifar
+from data_loader import get_cifar, get_open_images
 from models.model_factory import create_model
 from trainer import BaseTrainer, KDTrainer, MultiTrainer, TripletTrainer
 from plot import plot_results
@@ -238,7 +238,7 @@ def test_kdparam(s_net, t_net, params):
     for alpha, T, in param_pairs:
         params_s = params.copy()
         params_s["lambda_student"] = alpha
-        params_s["T_student"]: T
+        params_s["T_student"] = T
         s_name = params_s["student_name"]
         s_net = setup_student(s_name, params_s)
         params_s["test_name"] = f"{s_name}_{T}_{alpha}"
@@ -295,8 +295,8 @@ def run_benchmarks(modes, params, s_name, t_name):
 def start_evaluation(args):
     device = util.setup_torch()
     num_classes = 100 if args.dataset == "cifar100" else 10
-    train_loader, test_loader = get_cifar(num_classes,
-                                          batch_size=args.batch_size)
+    train_loader, test_loader = get_open_images(num_classes,
+                                          batch_size=args.batch_size) # get_cifar
 
     # for benchmarking, decided whether we want to use unique test folders
     if USE_ID:
